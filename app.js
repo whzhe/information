@@ -8,7 +8,13 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var params = require('express-params');
+var partials = require('express-partials');
+
 var app = express();
+
+app.use(partials()); //这个一定要写在app.use(app.router)之前
+params.extend(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
