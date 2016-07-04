@@ -41,7 +41,6 @@ router.post('/reg', function(req, res) {
 
     if (err) {
       req.session.error=err;
-      console.log("error1="+err);
       return res.redirect('/reg');
     }
 
@@ -56,6 +55,40 @@ router.post('/reg', function(req, res) {
       res.redirect('/');
     });
   });
+});
+
+
+router.get('/login', function(req, res) {
+  res.render('login', {
+    title: '用户登入',
+  });
+});
+
+router.post('/login', function(req, res) {
+  //生成口令的散列值
+  var md5 = crypto.createHash('md5');
+  var password = md5.update(req.body.password).digest('base64');
+
+  User.get(req.body.username, function(err, user) {
+    if (!user) {
+      req.session.error='用户不存在';
+      return res.redirect('/login');
+    }
+    if (user.password != password) {
+      req.session.error='用户口令错误';
+      return res.redirect('/login');
+    }
+
+    req.session.user = user;
+    req.session.message='登入成功';
+    res.redirect('/');
+  });
+});
+
+router.get('/logout', function(req, res) {
+    req.session.user = null;
+    req.session.message='登出成功';
+    res.redirect('/');
 });
 
 function checkNotLogin(req, res, next) {

@@ -30,8 +30,6 @@ User.get = function get(username, callback) {
       return callback(err);
     }
 
-    console.log("vals.length=%d", vals.length);
-
     if(vals.length < 1) {
       return callback(err, null);
     } else {
