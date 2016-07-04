@@ -19,8 +19,7 @@ router.post('/reg', checkNotLogin);
 router.post('/reg', function(req, res) {
   //檢驗用戶兩次輸入的口令是否一致
   if (req.body['password-repeat'] != req.body['password']) {
-    //req.flash('error', '兩次輸入的口令不一致');
-    req.session.error='兩次輸入的口令不一致';
+    req.flash('error', '兩次輸入的口令不一致');
     return res.redirect('/reg');
   }
 
@@ -40,18 +39,18 @@ router.post('/reg', function(req, res) {
     }
 
     if (err) {
-      req.session.error=err;
+      req.flash('error', err);
       return res.redirect('/reg');
     }
 
     //如果不存在則新增用戶
     newUser.save(function(err) {
       if (err) {
-        req.session.error=err;
+        req.flash('error', err);
         return res.redirect('/reg');
       }
       req.session.user = newUser;
-      req.session.message='註冊成功';
+      req.flash('success', '註冊成功');
       res.redirect('/');
     });
   });
@@ -71,29 +70,37 @@ router.post('/login', function(req, res) {
 
   User.get(req.body.username, function(err, user) {
     if (!user) {
-      req.session.error='用户不存在';
+      req.flash('error', '用戶不存在');
       return res.redirect('/login');
     }
     if (user.password != password) {
-      req.session.error='用户口令错误';
+      req.flash('error', '用戶口令錯誤');
       return res.redirect('/login');
     }
 
     req.session.user = user;
-    req.session.message='登入成功';
+    req.flash('success', '登入成功');
     res.redirect('/');
   });
 });
 
 router.get('/logout', function(req, res) {
     req.session.user = null;
-    req.session.message='登出成功';
+    req.flash('success', '登出成功');
     res.redirect('/');
 });
 
+function checkLogin(req, res, next) {
+  if (!req.session.user) {
+    req.flash('error', '未登入');
+    return res.redirect('/login');
+  }
+  next();
+}
+
 function checkNotLogin(req, res, next) {
   if (req.session.user) {
-    req.session.error='已登入';    
+    req.flash('error', '已登入');
     return res.redirect('/');
   }
   next();

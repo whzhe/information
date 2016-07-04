@@ -10,10 +10,14 @@ var session = require('express-session');
 var Settings = require('./lib/settings');
 var params = require('express-params');
 var partials = require('express-partials');
+var flash = require("connect-flash");
 
 var app = express();
 
+
 params.extend(app);
+
+app.use(flash());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,6 +36,18 @@ app.use(session({
     secret: Settings.COOKIE_SECRET,}));
 
 app.use(partials()); //这个一定要写在app.use(app.router)之前
+
+app.use(function(req, res, next){
+    console.log("app.usr local");
+    res.locals.user = req.session.user;
+    res.locals.post = req.session.post;
+    var error = req.flash('error');
+    res.locals.error = error.length ? error : null;
+
+    var success = req.flash('success');
+    res.locals.success = success.length ? success : null;
+    next();
+});
 
 app.use('/', routes);
 app.use('/users', users);
