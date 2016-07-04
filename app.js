@@ -13,7 +13,6 @@ var partials = require('express-partials');
 
 var app = express();
 
-app.use(partials()); //这个一定要写在app.use(app.router)之前
 params.extend(app);
 
 // view engine setup
@@ -31,6 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     cookie: { maxAge: 600000 },
     secret: Settings.COOKIE_SECRET,}));
+
+app.use(partials()); //这个一定要写在app.use(app.router)之前
 
 app.use('/', routes);
 app.use('/users', users);

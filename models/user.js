@@ -1,5 +1,5 @@
-var mongodb = require('./db');
-
+var query=require("../lib/mysql.js");  
+  
 function User(user) {
   this.name = user.name;
   this.password = user.password;
@@ -7,54 +7,38 @@ function User(user) {
 module.exports = User;
 
 User.prototype.save = function save(callback) {
-  // 存入 Mongodb 的文檔
+  var insertSql= 'INSERT INTO user SET userName =\'' + this.name + '\', password =\'' + this.password + '\'';
+
   var user = {
     name: this.name,
     password: this.password,
-  };
-  mongodb.open(function(err, db) {
-    if (err) {
+  };  
+
+  query(insertSql, function(err,vals) {
+    if(err) {
       return callback(err);
     }
-    // 讀取 users 集合
-    db.collection('users', function(err, collection) {
-      if (err) {
-        mongodb.close();
-        return callback(err);
-      }
-      // 爲 name 屬性添加索引
-      collection.ensureIndex('name', {unique: true});
-      // 寫入 user 文檔
-      collection.insert(user, {safe: true}, function(err, user) {
-        mongodb.close();
-        callback(err, user);
-      });
-    });
+    console.log('Id inserted: ' + vals.insertId);
+    callback(err, user);
   });
 };
 
 User.get = function get(username, callback) {
-  mongodb.open(function(err, db) {
-    if (err) {
+  var querySql = 'SELECT * FROM user where userName=\'' + username + '\'';
+  query(querySql, function(err,vals,fields) {
+    if(err) {
       return callback(err);
     }
-    // 讀取 users 集合
-    db.collection('users', function(err, collection) {
-      if (err) {
-        mongodb.close();
-        return callback(err);
-      }
-      // 查找 name 屬性爲 username 的文檔
-      collection.findOne({name: username}, function(err, doc) {
-        mongodb.close();
-        if (doc) {
-          // 封裝文檔爲 User 對象
-          var user = new User(doc);
-          callback(err, user);
-        } else {
-          callback(err, null);
-        }
-      });
-    });
+
+    console.log("vals.length=%d", vals.length);
+
+    if(vals.length < 1) {
+      return callback(err, null);
+    } else {
+      // 封裝文檔爲 User 對象
+      var user = new User({name: vals[0]['userName'],
+                           password: vals[0]['password']});
+      callback(err, user);
+    }
   });
 };
