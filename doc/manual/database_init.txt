@@ -21,4 +21,4 @@ create table user(id bigint unsigned primary key auto_increment,
 
 drop table if exists post;
 
-create table post(id int unsigned primary key auto_increment, userName char(32) not null, post text, time date);
+create table post(id int unsigned primary key auto_increment, userName char(32) not null, posts text, time date);
