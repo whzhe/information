@@ -1,7 +1,7 @@
 mysql -u root -p
 1234
 
-create database if not exists information;
+create database if not exists information default charset utf8 collate utf8_unicode_ci;
 
 use information;
 
@@ -18,3 +18,7 @@ create table user(id bigint unsigned primary key auto_increment,
     -> weiboAcc char(64) not null default 'invalid',
     -> isEmailActived tinyint default '0',
     -> isPhoneActived tinyint default '0');
+
+drop table if exists post;
+
+create table post(id int unsigned primary key auto_increment, userName char(32) not null, post text, time date);
