@@ -134,3 +134,37 @@ gameServer.on('connection', function(client){
 gameServer.listen(PORT, HOST);
  
 console.log('Server listening on ' + HOST +':'+ PORT);
+
+
+
+
+var netc = require('net');
+
+var HOST = 'luqiqianchong.qicp.io';
+var PORT = 20079;
+
+var client = new netc.Socket();
+client.connect(PORT, HOST, function() {
+
+    console.log('CONNECTED TO: ' + HOST + ':' + PORT);
+    // 建立连接后立即向服务器发送数据，服务器将收到这些数据 
+    for (var i=0; i<10; i++) {
+    client.write('I am Chuck Norris!');
+    }
+
+});
+
+// 为客户端添加“data”事件处理函数
+// data是服务器发回的数据
+client.on('data', function(data) {
+
+    console.log('DATA: ' + data);
+    // 完全关闭连接
+    client.destroy();
+
+});
+
+// 为客户端添加“close”事件处理函数
+client.on('close', function() {
+    console.log('Connection closed');
+});
