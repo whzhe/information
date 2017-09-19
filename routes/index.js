@@ -1,10 +1,38 @@
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
-var User = require('../models/user.js');
-var Post = require('../models/post.js');
+//var User = require('../models/m_user.js');
+//var Post = require('../models/m_post.js');
+var news = require('news');
+var internel = require('internel');
+var edit = require('edit');
 
+///////////whzhe add a news////////////////
+//router.post('/post', checkLogin);
+
+router.post('/news',function(req, res, next)
+{
+    news.message_handle(req, res);
+});
+
+router.post('/internel',function(req, res, next)
+{
+    internel.message_handle(req, res);
+});
+
+router.post('/edit',function(req, res, next)
+{
+    edit.message_handle(req, res);
+});
+
+///////////////////////////////////////////
 /* GET home page. */
+
+router.get('/', function(req, res, next) {
+        logger.info('This is an index page! -- log4js');
+});
+
+/*
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Express', layout: "layout" });
 });
@@ -100,7 +128,7 @@ router.post('/post', function(req,res) {
         res.redirect('/u/' + currentUser.name);
     });
 });
-
+/*
 router.get('/u/:user', function(req,res) {
     User.get(req.params.user, function(err, user) {
         if (!user) {
@@ -143,5 +171,5 @@ function checkNotLogin(req, res, next) {
   }
   next();
 }
-
+*/
 module.exports = router;

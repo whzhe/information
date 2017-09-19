@@ -6,13 +6,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var wenyou = require('./routes/wenyou');
-var gameweb = require('./routes/gameweb');
 var session = require('express-session');
 var Settings = require('./lib/settings');
 var params = require('express-params');
 var partials = require('express-partials');
 var flash = require("connect-flash");
+var MongoStore = require('connect-mongo');
+//var settings = require('../settings')
 
 var app = express();
 
@@ -31,8 +31,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(express.static('public'));
 app.use(session({
     cookie: { maxAge: 600000 },
     secret: Settings.COOKIE_SECRET,}));
@@ -53,8 +54,6 @@ app.use(function(req, res, next){
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/wenyou', wenyou);
-app.use('/gameweb', gameweb);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
